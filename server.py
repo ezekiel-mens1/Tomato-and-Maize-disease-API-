@@ -11,15 +11,15 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    files = list(request.files.values())
-    
-    # Validate exactly one file
-    if len(files) == 0:
-        return jsonify({'error': 'No file provided; please upload one image.'}), 400
-    if len(files) > 1:
-        return jsonify({'error': 'Too many files; please upload only one image at a time.'}), 400
+    # Check if the request is multipart/form-data
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file found in the request. Make sure to send a multipart/form-data with a "file" field.'}), 400
 
-    image_file = files[0]
+    image_file = request.files['file']
+
+    if image_file.filename == '':
+        return jsonify({'error': 'The file has no filename.'}), 400
+
     try:
         img = preprocess_image(image_file)
         class_id, prob = predict_disease(model, img)
@@ -37,9 +37,9 @@ def predict():
         'remedy':      disease['remedy']
     })
 
-# Vercel requires this named variable
+# For Render or Vercel
 api = app
 
-# Only run locally when executed directly
+# Run locally
 if __name__ == '__main__':
     app.run()
