@@ -11,14 +11,20 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Check if the request is multipart/form-data
+    # Print incoming data for debugging
+    print("Request content type:", request.content_type)
+    print("Request files:", request.files)
+    print("Request form:", request.form)
+
     if 'file' not in request.files:
-        return jsonify({'error': 'No file found in the request. Make sure to send a multipart/form-data with a "file" field.'}), 400
+        return jsonify({
+            'error': 'No file found in the request. Make sure to send a multipart/form-data request with a "file" field.'
+        }), 400
 
     image_file = request.files['file']
 
     if image_file.filename == '':
-        return jsonify({'error': 'The file has no filename.'}), 400
+        return jsonify({'error': 'Uploaded file has no name.'}), 400
 
     try:
         img = preprocess_image(image_file)
@@ -26,20 +32,20 @@ def predict():
     except Exception as e:
         return jsonify({'error': f'Failed to process image: {str(e)}'}), 500
 
-    disease = DISEASES.get(class_id, None)
+    disease = DISEASES.get(class_id)
     if disease is None:
         return jsonify({'error': 'Unknown prediction class.'}), 500
 
     return jsonify({
-        'disease':     disease['name'],
+        'disease': disease['name'],
         'probability': float(prob),
-        'cause':       disease['cause'],
-        'remedy':      disease['remedy']
+        'cause': disease['cause'],
+        'remedy': disease['remedy']
     })
 
-# For Render or Vercel
+# For Vercel/Render
 api = app
 
-# Run locally
+# For local testing
 if __name__ == '__main__':
     app.run()
