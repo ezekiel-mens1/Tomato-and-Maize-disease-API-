@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from ai_edge_litert.interpreter import Interpreter
 import numpy as np
 from PIL import Image
+from disease_info import DISEASES
 import io, base64
 
 app = Flask(__name__)
