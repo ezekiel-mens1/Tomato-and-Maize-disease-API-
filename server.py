@@ -8,7 +8,7 @@ import io, base64
 app = Flask(__name__)
 
 # Load TFLite model
-interpreter = Interpreter(model_path="leaf_disease_mobilenetv2.tflite")
+interpreter = Interpreter(model_path="tflite_learn_4.tflite")
 interpreter.allocate_tensors()
 
 # Causes and remedies
