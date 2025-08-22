@@ -8,7 +8,7 @@ import io, base64
 app = Flask(__name__)
 
 # Load TFLite model
-interpreter = Interpreter(model_path="")
+interpreter = Interpreter(model_path="mobilenetv2_model.tflite")
 interpreter.allocate_tensors()
 
 # Causes and remedies
